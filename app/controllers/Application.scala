@@ -1,20 +1,14 @@
 package controllers
 
-import play.api._
-import play.api.mvc._
-import models._
-import play.api.data._
-import play.api.data.Forms._
-import play.api.data.validation.Constraints._
-import anorm.NotAssigned
-import java.util.Date
-import com.octo.captcha.service.image.DefaultManageableImageCaptchaService
-import com.octo.captcha.service.image.ImageCaptchaService
-import javax.imageio.ImageIO
 import java.io.ByteArrayOutputStream
-import java.util.Locale
-import play.api.cache.Cache
-import java.util.UUID
+import java.util.{Locale, UUID}
+import javax.imageio.ImageIO
+
+import com.octo.captcha.service.image.{DefaultManageableImageCaptchaService, ImageCaptchaService}
+import models._
+import play.api.data.Forms._
+import play.api.data._
+import play.api.mvc._
 
 object Application extends Controller {
   val commentForm = Form(
@@ -26,14 +20,20 @@ object Application extends Controller {
         case (author, content, code, id) => captchaService.validateResponseForID(id, code)
       }))
 
-  def index = Action {
-    val allPosts = Post.allWithAuthorAndComments
-    Ok(views.html.index(
-      allPosts.headOption,
-      allPosts.drop(1)))
-  }
+  def index =
+    Action {
+      request =>
+        request.session.get(Security.username)
+      val allPosts = Post.allWithAuthorAndComments
+      Ok(views.html.index(
+        allPosts.headOption,
+        allPosts.drop(1)))
+    }
 
-  def show(id: Long) = Action { implicit request =>
+
+  def show(id: Long) =
+    Action { implicit request =>
+
     Post.byIdWithAuthorAndComments(id).map {
       post =>
         Ok(views.html.show(post, post._1.prevNext, commentForm.fill("", "", "", UUID.randomUUID().toString())))

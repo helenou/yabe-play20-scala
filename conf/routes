@@ -10,5 +10,11 @@ GET		/captcha							controllers.Application.captcha(id : String)
 # Home page
 GET     /                           controllers.Application.index
 
+# Login page
+GET     /login                          controllers.Admin.index
+
+# SubmitLogin
+POST     /login                          controllers.Admin.submitLogin
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

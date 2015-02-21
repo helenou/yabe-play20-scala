@@ -1,0 +1,12 @@
+@(loginForm: Form[Credentials])
+
+@helper.form(action= routes.Admin.submitLogin){
+    @helper.inputText(loginForm("username"))
+    @helper.inputPassword(loginForm("password"))
+
+    @for(error <- loginForm.globalError) {
+        <p class="error">@error.message</p>
+    }
+
+    <button type="submit">Login</button>
+}
